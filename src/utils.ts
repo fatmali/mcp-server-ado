@@ -47,7 +47,8 @@ export interface PullRequestPayload {
 export async function makeAzureDevOpsRequest<T>(
   endpoint: string,
   config: AzureDevOpsConfig,
-  apiVersion: string = "7.1-preview.3"
+  apiVersion: string = "7.1-preview.3",
+  payload?: string
 ): Promise<T | null> {
   const { patToken, organization, project } = config;
   
@@ -66,7 +67,7 @@ export async function makeAzureDevOpsRequest<T>(
     const baseUrl = `https://dev.azure.com/${organization}/${project}/_apis`;
     const url = `${baseUrl}${endpoint}${endpoint.includes('?') ? '&' : '?'}api-version=${apiVersion}`;
     
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, { headers, body: payload, method: payload ? 'POST' : 'GET' });
     
     if (!response.ok) {
       const errorText = await response.text();
@@ -139,7 +140,8 @@ export async function createPullRequest(
     const response = await makeAzureDevOpsRequest<GitPullRequest>(
       `/git/repositories/${repositoryId}/pullrequests`,
       config,
-      apiVersion
+      apiVersion,
+      JSON.stringify(payload)
     );
     
     return response;
