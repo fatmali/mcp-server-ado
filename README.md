@@ -1,98 +1,133 @@
-# MCP Server for Azure DevOps
+# Azure DevOps MCP Server
 
-A Model Context Protocol (MCP) server that provides tools for interacting with Azure DevOps work items and pull requests. This server enables AI assistants to retrieve work item details and create pull requests in Azure DevOps repositories.
+A Model Context Protocol (MCP) server that integrates with Azure DevOps, providing tools to retrieve work items and create pull requests through a standardized interface.
 
 ## Features
 
-- **Work Item Retrieval**: Fetch work item details from Azure DevOps by ID
-- **Pull Request Creation**: Create pull requests in Azure DevOps repositories
-- **MCP Integration**: Built with the Model Context Protocol SDK for seamless integration with AI assistants
+- **Work Item Retrieval**: Fetch work items from Azure DevOps by ID and convert them into actionable task descriptions
+- **Pull Request Creation**: Create pull requests in Azure DevOps repositories directly through the MCP interface
+- **Environment Configuration**: Easily configure Azure DevOps connections using environment variables
 
-## Requirements
+## Prerequisites
 
-- Node.js (v18 or higher)
-- TypeScript
-- Azure DevOps organization with proper access permissions
-- Personal Access Token (PAT) with appropriate permissions
+- Node.js (v18 or later)
+- npm or yarn
+- Azure DevOps account with appropriate permissions
+- Personal Access Token (PAT) with necessary scopes for Azure DevOps API access
 
 ## Installation
 
-1. Clone this repository:
-   ```
-   git clone <repository-url>
+1. Clone the repository:
+   ```bash
+   git clone <your-repository-url>
    cd mcp-server-ado
    ```
 
 2. Install dependencies:
-   ```
+   ```bash
    npm install
    ```
 
-3. Create a `.env` file in the root directory with the following variables:
-   ```
-   AZURE_DEVOPS_ORG=your-organization
-   AZURE_DEVOPS_PAT=your-pat-token
-   AZURE_DEVOPS_PROJECT=your-project
-   AZURE_DEVOPS_REPO=your-repository
-   AZURE_DEVOPS_AREA_PATH=optional-area-path
-   ```
-
-## Development
-
-1. Build the project:
-   ```
+3. Build the project:
+   ```bash
    npm run build
    ```
 
-2. Start the server:
-   ```
-   npm start
-   ```
+## Configuration
 
-3. For development with auto-reloading, you can use nodemon (install with `npm install -g nodemon`):
-   ```
-   nodemon --watch src --ext ts --exec "npm run build && npm start"
-   ```
+Create a `.env` file in the project root with the following environment variables:
+
+```
+AZURE_DEVOPS_ORG=your-organization
+AZURE_DEVOPS_PAT=your-personal-access-token
+AZURE_DEVOPS_PROJECT=your-project
+AZURE_DEVOPS_REPO=your-repository-id
+AZURE_DEVOPS_AREA_PATH=optional-area-path
+```
 
 ## Usage
 
-### As a CLI Tool
+### Running the MCP Server
 
-Once installed, you can use the tool directly from the command line:
+Start the server:
+
+```bash
+npm start
+```
+
+The server runs on stdio, making it compatible with MCP clients that communicate through standard input/output.
+
+### Available Tools
+
+#### 1. Code Work Item
+
+Retrieves an Azure DevOps work item by ID and formats it as an actionable task.
+
+**Parameters:**
+- `workItemId`: ID of the work item to retrieve (number)
+
+**Example:**
+```json
+{
+  "workItemId": 123
+}
+```
+
+#### 2. Create Pull Request
+
+Creates a pull request in an Azure DevOps repository.
+
+**Parameters:**
+- `title`: Title for the pull request (required)
+- `description`: Description for the pull request (optional)
+- `sourceBranch`: Source branch name (required)
+- `targetBranch`: Target branch name (optional, defaults to "main")
+- `reviewerIds`: Array of reviewer IDs (optional)
+
+**Example:**
+```json
+{
+  "title": "Feature implementation",
+  "description": "Implements feature X as described in work item #123",
+  "sourceBranch": "feature/x-implementation",
+  "targetBranch": "develop",
+  "reviewerIds": ["user-guid-1", "user-guid-2"]
+}
+```
+
+## Development
+
+### Project Structure
 
 ```
-ado-workitems
+.
+├── src/
+│   ├── index.ts        # Main application entry point
+│   └── utils.ts        # Utility functions for Azure DevOps API
+├── build/              # Compiled JavaScript output
+├── package.json        # Project dependencies and scripts
+└── tsconfig.json       # TypeScript configuration
 ```
 
-### As an MCP Server
+### Adding New Features
 
-This server implements two MCP tools:
+1. Define new interfaces in `utils.ts` if necessary
+2. Implement API interaction functions in `utils.ts`
+3. Create a new MCP tool in `index.ts` using the `server.tool()` method
+4. Build and test your changes
 
-1. **code-work-item**: Retrieves an Azure DevOps work item by ID
-   - Required parameters:
-     - `workItemId`: The ID of the work item to retrieve
+### Building for Production
 
-2. **create-pull-request**: Creates a pull request in an Azure DevOps repository
-   - Required parameters:
-     - `title`: Title for the pull request
-     - `sourceBranch`: Source branch name
-   - Optional parameters:
-     - `description`: Description for the pull request
-     - `targetBranch`: Target branch name (defaults to "main")
-     - `reviewerIds`: Array of reviewer IDs
+```bash
+npm run build
+```
 
-## Architecture
+This will compile TypeScript to JavaScript in the `build` directory.
 
-The server is built using:
-- TypeScript for type safety and modern JavaScript features
-- Model Context Protocol SDK for standardized communication with AI assistants
-- Node.js for the runtime environment
-- Zod for request validation
+## License
+
+ISC
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-ISC License
