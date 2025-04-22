@@ -168,10 +168,9 @@ server.tool("create-pull-request",
 - **Status:** ${pullRequest.status}
 - **Source Branch:** ${pullRequest.sourceRefName}
 - **Target Branch:** ${pullRequest.targetRefName}
-- **Created By:** ${pullRequest.createdBy.displayName}
 - **Creation Date:** ${pullRequest.creationDate}
 
-You can view this pull request at: ${pullRequest.webUrl}
+You can view this pull request at: ${pullRequest.url}
                     `,
                 }
             ]
