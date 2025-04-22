@@ -138,7 +138,7 @@ server.tool("create-pull-request",
             sourceRefName: sourceRef,
             targetRefName: targetRef,
             title: title,
-            description: description || "",
+            description: description,
         };
         
         // Create the pull request

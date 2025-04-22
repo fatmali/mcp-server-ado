@@ -134,7 +134,7 @@ export async function createPullRequest(
   config: AzureDevOpsConfig
 ): Promise<GitPullRequest | null> {
   // Git API version differs from Work Item API
-  const apiVersion = '7.1-preview.1';
+  const apiVersion = '7.1-preview.2';
   
   try {
     const response = await makeAzureDevOpsRequest<GitPullRequest>(
