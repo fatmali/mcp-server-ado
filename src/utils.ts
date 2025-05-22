@@ -1,4 +1,5 @@
 import { GitPullRequest } from "azure-devops-node-api/interfaces/GitInterfaces.js";
+import { SpotifyConfig } from './spotify.js';
 
 export const USER_AGENT = "ado-workitems-mcp-server/1.0";
 
@@ -41,6 +42,16 @@ export interface PullRequestPayload {
   reviewers?: Array<{
     id: string;
   }>;
+}
+
+// Interface for Spotify configuration
+export interface ResponseWithMusic {
+    workItem: string;
+    suggestedTracks: Array<{
+        name: string;
+        artist: string;
+        url: string;
+    }>;
 }
 
 // Function to make authenticated requests to Azure DevOps API

@@ -1,129 +1,50 @@
-# Azure DevOps Work Items MCP Server
+# MCP Server with Azure DevOps and Spotify Integration
 
-A Model Context Protocol (MCP) server that integrates with Azure DevOps. This tool enables AI assistants to interact with Azure DevOps work items and create pull requests, providing a bridge between your AI workflows and Azure DevOps project management.
+This project provides integration between Azure DevOps work items and Spotify music recommendations.
 
-## Features
+## Spotify Authentication
 
-- **Work Item Retrieval**: Fetch detailed information about Azure DevOps work items by ID
-- **Work Item Processing**: Convert work item descriptions into actionable tasks for AI assistants
-- **Pull Request Creation**: Create pull requests directly from the MCP server
-- **Environment-Based Configuration**: Easy setup using environment variables
+Spotify API now requires HTTPS for redirect URIs, even for local development. To set up Spotify authentication:
 
-## Prerequisites
+1. Generate self-signed SSL certificates:
+   ```bash
+   npm run gen:certs
+   ```
 
-- Node.js (v16 or later)
-- npm or yarn
-- Azure DevOps organization and project
-- Personal Access Token (PAT) with appropriate permissions
+2. Configure your Spotify App:
+   - Go to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+   - Create a new application
+   - In the app settings, add the following redirect URI:
+     ```
+     https://localhost:8888/callback
+     ```
+   - Copy your client ID and client secret
 
-## Setup
+3. Set up your configuration:
+   - Edit `spotify-config.json` with your client ID, client secret, and redirect URI
+   - The redirect URI must use HTTPS (e.g., `https://localhost:8888/callback`)
 
-### 1. Clone the repository
+4. Run the authentication command:
+   ```bash
+   npm run auth:spotify
+   ```
+   
+   Or run the complete setup process in one command:
+   ```bash
+   npm run setup:spotify
+   ```
 
-```bash
-git clone <repository-url>
-cd mcp-server-ado
-```
+5. Visit the URL shown in the terminal to authorize the application
+   - Accept the browser warning about self-signed certificates
+   - Authorize the application in Spotify
+   - You'll be redirected back to your local server to complete the authentication
 
-### 2. Install dependencies
+## SSL Certificate Notes
 
-```bash
-npm install
-```
-
-### 3. Configure Environment Variables
-
-Create a `.env` file in the root directory with the following variables:
-
-```
-AZURE_DEVOPS_ORG=your-organization
-AZURE_DEVOPS_PAT=your-personal-access-token
-AZURE_DEVOPS_PROJECT=your-project-name
-AZURE_DEVOPS_REPO=your-repository-name
-AZURE_DEVOPS_AREA_PATH=optional-area-path
-```
-
-### 4. Build the project
-
-```bash
-npm run build
-```
-
-### 5. Run the server
-
-```bash
-npm start
-```
-
-## Development
-
-### Project Structure
-
-- `src/index.ts`: Main entry point and MCP server configuration
-- `src/utils.ts`: Utility functions for Azure DevOps integration
-- `build/`: Compiled JavaScript files
-- `.env`: Environment configuration (create this file yourself)
-
-### Available Scripts
-
-- `npm run build`: Compiles TypeScript files to JavaScript
-- `npm start`: Runs the compiled application
-- `npm test`: Runs tests (currently not implemented)
-
-### Adding New Tools
-
-To add a new tool to the MCP server, follow this pattern in `src/index.ts`:
-
-```typescript
-server.tool("tool-name", 
-    "Tool description",
-    {
-        param1: z.string().describe("Parameter description"),
-        // Add more parameters as needed
-    },
-    async (args, extra) => {
-        // Implement tool functionality
-        return {
-            content: [
-                {
-                    type: "text",
-                    text: "Response text",
-                }
-            ]
-        };
-    }
-);
-```
-
-## API Reference
-
-### code-work-item
-
-Retrieves an Azure DevOps work item by ID and formats it for AI processing.
-
-**Parameters:**
-- `workItemId`: The numeric ID of the work item to retrieve
-
-### create-pull-request
-
-Creates a pull request in your Azure DevOps repository.
-
-**Parameters:**
-- `title`: Title for the pull request
-- `description` (optional): Description for the pull request
-- `sourceBranch`: Source branch name
-- `targetBranch` (optional): Target branch name (defaults to "main")
+The generated SSL certificates are self-signed and for local development only. When accessing the callback URL in your browser, you'll need to accept the security warning as the certificate is not trusted by your system.
 
 ## Troubleshooting
 
-- **Authentication Issues**: Ensure your PAT has the correct permissions
-- **Missing Environment Variables**: Check that all required environment variables are set
-- **API Errors**: Review the console error output for specific API error messages
-
-## License
-
-ISC
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
+- If you see `INVALID_CLIENT: Insecure redirect URI` error, make sure your redirect URI uses HTTPS.
+- If you have certificate errors, regenerate the certificates using the script.
+- Make sure the redirect URI in your Spotify Developer Dashboard exactly matches the one in your config file.

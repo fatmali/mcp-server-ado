@@ -1,2 +1,19 @@
-node_modules/
+# Azure DevOps Configuration
+AZURE_DEVOPS_ORG=your-org-name
+AZURE_DEVOPS_PAT=your-personal-access-token
+AZURE_DEVOPS_PROJECT=your-project-name
+AZURE_DEVOPS_AREA_PATH=optional-area-path
+AZURE_DEVOPS_REPO=optional-repository-name
+
+# Spotify Configuration
+SPOTIFY_CLIENT_ID=your-spotify-client-id
+SPOTIFY_CLIENT_SECRET=your-spotify-client-secret
+SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
+
+# Logging Configuration
+LOG_LEVEL=info # debug, info, warn, or error
+node_modules
 build
+*.log
+certs
+spotify-config.json
